@@ -32,10 +32,11 @@ public class BeginEndStack {
 				}
 			
 		}
-		return null;
+		return new Token(Token.T.NADA, -1, -1);
 	}
 	
-	public String popAll(){
+	public Token popAll(int line, int col){
+		if(!stack.isEmpty()){
 		java.util.Iterator<Integer> it = stack.iterator();
 		String pop = "";
 		while (it.hasNext()) {
@@ -43,7 +44,9 @@ public class BeginEndStack {
 			pop += "END\n";
 		}
 		stack.removeAllElements();
-		return pop;
+		return new Token(Token.T.END, pop+"",line, col);
+		}
+		return new Token(Token.T.NADA, -1, -1);
 	}
 
 }

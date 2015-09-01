@@ -17,7 +17,9 @@ public class Main {
 		do
 		{
 		token = scanner.yylex();
-		System.out.println(token);
+			if(token.toString() != ""){
+				System.out.println(token);
+			}
 		}
 		while (token.type != token.type.EOF);
 		}

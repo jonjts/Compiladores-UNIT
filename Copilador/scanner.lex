@@ -24,7 +24,7 @@ import br.com.jonjts.entity.*;
 	private Token token(Token.T type){
 		return new Token(type, yyline, yycolumn);
 	}
-	
+	 
 	private Token token(Token.T type, Object val){
 		return new Token(type, val, yyline, yycolumn);
 	}
@@ -40,13 +40,17 @@ ID = {ALPHA}({ALPHA}|{DIG}|_)*
 INTEGER = {DIG}+
 FLOAT = {DIG}+ "." {DIG}* | {DIG}* "." {DIG}+
 
-ALPHA_NUMERIC = ({APLHA} | {DIG} | {FLOAT}| " ")+
-COMENTARIO = ("{") ALPHA_NUMERIC ("}")
+ALPHA_NUMERIC = ({ALPHA} | {DIG} | {FLOAT}| " ")+
+COMENTARIO = "{" {ALPHA_NUMERIC} "}"
 
 %state CHECK_BEGIN_END
 
 %%
 <YYINITIAL>{ 
+
+\n{ESPACOS}		{ return bes.checkSpace(yytext(),yyline, yycolumn);	}
+
+\n			{ return bes.popAll(yyline, yycolumn); }
 
 int 		{ return token(Token.T.INT, yytext());}
 
@@ -86,11 +90,10 @@ false		{ return token(Token.T.FALSE, yytext()); }
 
 {COMENTARIO} { return token(Token.T.COMENTARIO, yytext()); } 
 
-
 "("			{ return token(Token.T.ABRE_PARENTESE, yytext()); }
 
 ")"			{ return token(Token.T.FECHA_PARENTESE, yytext()); }
-
+ 
 :			{ return token(Token.T.DOIS_PONTOS, yytext()); }
 
 "<"			{ return token(Token.T.MENOR_QUE, yytext()); }
@@ -110,21 +113,11 @@ false		{ return token(Token.T.FALSE, yytext()); }
 ","			{ return token(Token.T.VIRGULA, yytext()); }
 
 "="			{ return token(Token.T.IGUALDADE, yytext()); }
-
-		
  
-[ \n\t\r]+	{ /* do nothing */ }
+[ \t\r]+	{ /* do nothing */ }
 
-<<EOF>>		{ return token(Token.T.EOF); }
+<<EOF>>		{ return bes.popAll(yyline, yycolumn); }
 
-.            { System.err.println("Illegal character: ' " + yytext() + " '"); }
+.           { System.err.println("Illegal character: ' " + yytext() + " '"); }
 }
 
-<CHECK_BEGIN_END>{
-
-" "	{ yybegin(YYINITIAL); return bes.checkSpace(yytext(),yyline, yycolumn);	}
-{NOT_ESPACO} {	yybegin(YYINITIAL);	}
-
-
-
-}

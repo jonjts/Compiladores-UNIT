@@ -7,6 +7,7 @@ import java.util.Stack;
 public class Token {
 
 	public enum T {
+		NADA { public String toString(){return "";}},
 		COMENTARIO {public String toString(){return "COMENTARIO";}},
 		BEGIN {public String toString(){return "BEGIN";}},
 		END {public String toString(){return "END";}},
@@ -63,10 +64,13 @@ public class Token {
 	}
 
 	public String toString() {
+		if(line == -1 || col == -1){
+			return "";
+		}
 		Formatter out = new Formatter();
-		out.format(" (%4d,%4d ) %s", line, col, type);
+		out.format(" [%3d,%3d] %s", line, col, type);
 		if (val != null)
-			out.format(" [%s ] ", val);
+			out.format(" [%s] ", val);
 		return out.toString();
 	}
 
